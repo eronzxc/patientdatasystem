@@ -54,10 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $pdo->prepare("UPDATE users SET full_name=?, role=?, email=? WHERE id=?")
                 ->execute([$fullname, $role, $email ?: null, $id]);
-            if ($id == $_SESSION['user_id']) {
-                $_SESSION['user_name'] = $fullname;
-                $_SESSION['user_role'] = $role;
-            }
             $msg = "User updated.";
         }
     }

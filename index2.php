@@ -382,6 +382,9 @@ tr:hover td{background:#F8FAFB;}
           <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Export CSV
         </a>
+        <?php if($can_write):?>
+        <button class="btn btn-primary btn-sm" onclick="openRegModal()" style="padding:8px 14px;font-size:12.5px;">+ Register Patient</button>
+        <?php endif;?>
       </div>
     </div>
 

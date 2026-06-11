@@ -377,12 +377,7 @@ tr:hover td{background:#F8FAFB;}
         <h1>Patient Registry</h1>
         <p>Register, view, and manage patient records.</p>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <a href="export.php" class="btn btn-ghost btn-sm" style="display:flex;align-items:center;gap:6px;text-decoration:none;padding:8px 14px;font-size:12.5px;">
-          <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Export CSV
-        </a>
-      </div>
+
     </div>
 
     <!-- Stats -->
@@ -680,13 +675,7 @@ tr:hover td{background:#F8FAFB;}
     <div class="modal-hdr">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <h3>Patient Details</h3>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-        <button class="btn btn-ghost btn-sm" id="btn-print-pdf" onclick="printPatientPDF()" style="display:flex;align-items:center;gap:5px;font-size:12px;">
-          <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          Print / PDF
-        </button>
-        <button class="modal-close" onclick="closeDetail()">&times;</button>
-      </div>
+      <button class="modal-close" onclick="closeDetail()">&times;</button>
     </div>
     <div class="modal-body" id="detail-content"></div>
   </div>
@@ -785,104 +774,7 @@ function setVal(id, val) {
 }
 
 // ── DETAIL MODAL ──────────────────────────────────────────
-let currentPatient = null;
-
-function printPatientPDF() {
-    if (!currentPatient) return;
-    const p = currentPatient;
-    const dob = new Date(p.birthdate);
-    const age = Math.floor((new Date() - dob) / (365.25*24*60*60*1000));
-    const now = new Date().toLocaleString('en-PH', {dateStyle:'long', timeStyle:'short'});
-    const typeColor = {Outpatient:'#1A7F5A', Inpatient:'#1A5BA8', Emergency:'#C0392B'}[p.patient_type] || '#333';
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Patient Record - ${p.patient_no}</title>
-    <style>
-      *{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:'Segoe UI',sans-serif;font-size:12px;color:#1a1a2e;background:#fff;padding:24px;}
-      .header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #0D2137;padding-bottom:12px;margin-bottom:16px;}
-      .logo-area{display:flex;align-items:center;gap:10px;}
-      .logo-box{width:36px;height:36px;background:#0D2137;border-radius:7px;display:flex;align-items:center;justify-content:center;}
-      .logo-box svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-      .sys-name{font-size:13px;font-weight:800;color:#0D2137;letter-spacing:.05em;}
-      .sys-sub{font-size:9px;color:#888;margin-top:2px;}
-      .print-meta{text-align:right;font-size:10px;color:#666;}
-      .patient-no{font-size:11px;font-family:monospace;color:#555;margin-bottom:4px;}
-      .patient-name{font-size:20px;font-weight:800;color:#0D2137;margin-bottom:4px;}
-      .type-badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:10px;font-weight:700;color:#fff;background:${typeColor};}
-      .section{margin-top:16px;}
-      .section-title{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;border-bottom:1px solid #e0e0e0;padding-bottom:4px;margin-bottom:10px;}
-      .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;}
-      .field{margin-bottom:2px;}
-      .field-lbl{font-size:9.5px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
-      .field-val{font-size:12px;color:#0D2137;font-weight:500;margin-top:1px;}
-      .field.span-2{grid-column:span 2;}
-      .footer{margin-top:24px;border-top:1px solid #eee;padding-top:10px;font-size:9.5px;color:#aaa;display:flex;justify-content:space-between;}
-      @media print{body{padding:10px;} @page{margin:1cm;}}
-    </style></head><body>
-    <div class="header">
-      <div class="logo-area">
-        <div class="logo-box"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-        <div><div class="sys-name">PATIENTDATAPROGRAM</div><div class="sys-sub">Patient Registry &amp; Information System</div></div>
-      </div>
-      <div class="print-meta"><strong>PATIENT RECORD</strong><br>Printed: ${now}</div>
-    </div>
-    <div class="patient-no">${p.patient_no}</div>
-    <div class="patient-name">${p.full_name}</div>
-    <div style="margin-top:6px;"><span class="type-badge">${p.patient_type}</span></div>
-
-    <div class="section">
-      <div class="section-title">Personal Information</div>
-      <div class="grid">
-        <div class="field"><div class="field-lbl">Birthdate</div><div class="field-val">${p.birthdate} (${age} y/o)</div></div>
-        <div class="field"><div class="field-lbl">Sex</div><div class="field-val">${p.sex}</div></div>
-        <div class="field"><div class="field-lbl">Civil Status</div><div class="field-val">${p.civil_status||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Blood Type</div><div class="field-val">${p.blood_type||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Nationality</div><div class="field-val">${p.nationality||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Religion</div><div class="field-val">${p.religion||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Contact No.</div><div class="field-val">${p.contact_number||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Email</div><div class="field-val">${p.email||'—'}</div></div>
-        <div class="field span-2"><div class="field-lbl">Address</div><div class="field-val">${[p.address,p.city,p.province].filter(Boolean).join(', ')||'—'}</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Emergency Contact</div>
-      <div class="grid">
-        <div class="field"><div class="field-lbl">Name</div><div class="field-val">${p.emergency_name||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Relationship</div><div class="field-val">${p.emergency_relation||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Contact No.</div><div class="field-val">${p.emergency_contact||'—'}</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Medical Information</div>
-      <div class="grid">
-        <div class="field"><div class="field-lbl">Department</div><div class="field-val">${p.dept_name||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Attending Physician</div><div class="field-val">${p.doctor_name||'—'}</div></div>
-        <div class="field"><div class="field-lbl">HMO / Insurance</div><div class="field-val">${p.hmo_name||'—'}</div></div>
-        <div class="field"><div class="field-lbl">HMO Card No.</div><div class="field-val">${p.hmo_card_no||'—'}</div></div>
-        <div class="field span-2"><div class="field-lbl">Chief Complaint</div><div class="field-val">${p.chief_complaint||'—'}</div></div>
-        <div class="field span-2"><div class="field-lbl">Known Allergies</div><div class="field-val">${p.allergies||'None'}</div></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Registration</div>
-      <div class="grid">
-        <div class="field"><div class="field-lbl">Registered</div><div class="field-val">${p.registered_at?.substring(0,10)||'—'}</div></div>
-        <div class="field"><div class="field-lbl">Registered By</div><div class="field-val">${p.registered_by||'—'}</div></div>
-      </div>
-    </div>
-
-    <div class="footer"><span>PatientDataProgram v1.0 &nbsp;·&nbsp; OJT Prototype</span><span>${p.patient_no}</span></div>
-    <script>window.onload=function(){window.print();}<\/script>
-    </body></html>`;
-    const w = window.open('','_blank','width=800,height=900');
-    w.document.write(html);
-    w.document.close();
-}
-
 function openDetail(p) {
-    currentPatient = p;
     const dob = new Date(p.birthdate);
     const age = Math.floor((new Date() - dob) / (365.25*24*60*60*1000));
     const tmap = {Outpatient:'b-out',Inpatient:'b-in',Emergency:'b-emr'};
