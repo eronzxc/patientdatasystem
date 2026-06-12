@@ -372,7 +372,6 @@ html,body{height:100%;font-family:var(--font);font-size:14px;background:var(--su
                 <option value="">— Select —</option>
                 <option value="Male"   <?=$v['sex']==='Male'?'selected':''?>>Male</option>
                 <option value="Female" <?=$v['sex']==='Female'?'selected':''?>>Female</option>
-                <option value="Other"  <?=$v['sex']==='Other'?'selected':''?>>Other</option>
               </select>
             </div>
           </div>

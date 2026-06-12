@@ -378,10 +378,10 @@ tr:hover td{background:#F8FAFB;}
         <p>Register, view, and manage patient records.</p>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <button onclick="exportVisibleCSV()" class="btn btn-ghost btn-sm" style="display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12.5px;">
+        <a href="export.php" class="btn btn-ghost btn-sm" style="display:flex;align-items:center;gap:6px;text-decoration:none;padding:8px 14px;font-size:12.5px;">
           <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Export CSV
-        </button>
+        </a>
       </div>
     </div>
 
@@ -418,6 +418,7 @@ tr:hover td{background:#F8FAFB;}
         <option value="">All</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
+        <option value="Other">Other</option>
       </select>
     </div>
 
@@ -518,6 +519,7 @@ tr:hover td{background:#F8FAFB;}
               <option value="">— Select —</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           <div class="fg"><label>Civil Status</label>
@@ -917,50 +919,6 @@ function closeDetail() { document.getElementById('detail-modal').classList.remov
 function esc(str) {
     return String(str??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-// ── EXPORT VISIBLE CSV ────────────────────────────────────
-function exportVisibleCSV() {
-    const headers = ['Patient No.','Full Name','Age','Sex','Type','Department','Doctor','HMO','Registered'];
-    const rows = [headers];
-
-    document.querySelectorAll('#patient-tbody tr[data-name]').forEach(tr => {
-        if (tr.style.display === 'none') return;
-        const cells = tr.querySelectorAll('td');
-        const patientNo  = cells[0]?.innerText.trim() || '';
-        const fullName   = cells[1]?.innerText.trim() || '';
-        const ageSex     = cells[2]?.innerText.trim() || '';
-        const agePart    = ageSex.replace(/[^\d]/g,'').trim();
-        const sexPart    = tr.dataset.sex || '';
-        const type       = cells[3]?.innerText.trim() || '';
-        const dept       = cells[4]?.innerText.trim() || '';
-        const doctor     = cells[5]?.innerText.trim() || '';
-        const hmo        = cells[6]?.innerText.trim() || '';
-        const registered = cells[7]?.innerText.trim() || '';
-        rows.push([patientNo, fullName, agePart, sexPart, type, dept, doctor, hmo, registered]);
-    });
-
-    const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\r\n');
-    const bom  = '\uFEFF';
-    const blob = new Blob([bom + csv], {type:'text/csv;charset=utf-8;'});
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    const now  = new Date();
-    const ts   = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
-    const typeFilter = document.getElementById('f-type').value;
-    const deptFilter = document.getElementById('f-dept').value;
-    const sexFilter  = document.getElementById('f-sex').value;
-    const searchVal  = document.getElementById('search-q').value.trim();
-    let label = '';
-    if (typeFilter) label += '_' + typeFilter;
-    if (deptFilter) label += '_' + deptFilter.replace(/[^a-zA-Z0-9]/g,'');
-    if (sexFilter)  label += '_' + sexFilter;
-    if (searchVal)  label += '_Search';
-    if (!label)     label = '_All';
-    a.href     = url;
-    a.download = 'PatientRegistry' + label + '_' + ts + '.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
 document.addEventListener('keydown', e => { if(e.key==='Escape'){closeRegModal();closeDetail();} });
 </script>
 </body>

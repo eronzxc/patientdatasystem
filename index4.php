@@ -518,6 +518,7 @@ tr:hover td{background:#F8FAFB;}
               <option value="">— Select —</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           <div class="fg"><label>Civil Status</label>
@@ -945,18 +946,8 @@ function exportVisibleCSV() {
     const a    = document.createElement('a');
     const now  = new Date();
     const ts   = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
-    const typeFilter = document.getElementById('f-type').value;
-    const deptFilter = document.getElementById('f-dept').value;
-    const sexFilter  = document.getElementById('f-sex').value;
-    const searchVal  = document.getElementById('search-q').value.trim();
-    let label = '';
-    if (typeFilter) label += '_' + typeFilter;
-    if (deptFilter) label += '_' + deptFilter.replace(/[^a-zA-Z0-9]/g,'');
-    if (sexFilter)  label += '_' + sexFilter;
-    if (searchVal)  label += '_Search';
-    if (!label)     label = '_All';
     a.href     = url;
-    a.download = 'PatientRegistry' + label + '_' + ts + '.csv';
+    a.download = 'PatientRegistry_' + ts + '.csv';
     a.click();
     URL.revokeObjectURL(url);
 }
